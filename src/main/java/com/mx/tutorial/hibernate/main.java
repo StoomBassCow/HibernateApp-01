@@ -9,12 +9,16 @@ import com.mx.tutorial.hibernate.entities.Medico;
 import com.mx.tutorial.hibernate.sessions.HibernateSession;
 import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
 
 /**
  *
@@ -31,17 +35,13 @@ public class main {
         try {
 
             session = HibernateSession.getSessionFactory().openSession();
-            Criteria cri = session.createCriteria(Medico.class);
+            SQLQuery query = (SQLQuery) session.createNativeQuery("SELECT id, nombre FROM medico")
+                    .addScalar("id", new IntegerType())
+                    .addScalar("nombre", new StringType())
+                    .setResultTransformer(Transformers.aliasToBean(Medico.class));
             
-            
-            Criterion id = Restrictions.eq("id", 1);
-            Criterion nombre = Restrictions.eq("nombre", 1);
-            
-            LogicalExpression le = Restrictions.and(id, nombre);
-            
-            cri.add(le);
-            medico = (Medico) cri.uniqueResult();
-
+            medicos = query.list();
+                    
         } catch (Exception e) {
             e.getStackTrace();
         } finally {
@@ -50,7 +50,7 @@ public class main {
 
             }
         }
-        System.out.println(medico);
+        System.out.println(medicos);
     }
 
 }
