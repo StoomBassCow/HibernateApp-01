@@ -8,7 +8,12 @@ package com.mx.tutorial.hibernate;
 import com.mx.tutorial.hibernate.entities.Medico;
 import com.mx.tutorial.hibernate.sessions.HibernateSession;
 import java.util.List;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.LogicalExpression;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 
 /**
@@ -24,16 +29,18 @@ public class main {
         List<Medico> medicos = null;
 
         try {
-            /*
-           
-            medico = session.get(Medico.class, 3);
-             */
-            session = HibernateSession.getSessionFactory().openSession();
 
-            Query query = session.createQuery("SELECT m FROM Medico m WHERE m.id = :id");
-            query.setParameter("id",3);
-            medico = (Medico) query.getSingleResult();
-            medicos = query.getResultList();
+            session = HibernateSession.getSessionFactory().openSession();
+            Criteria cri = session.createCriteria(Medico.class);
+            
+            
+            Criterion id = Restrictions.eq("id", 1);
+            Criterion nombre = Restrictions.eq("nombre", 1);
+            
+            LogicalExpression le = Restrictions.and(id, nombre);
+            
+            cri.add(le);
+            medico = (Medico) cri.uniqueResult();
 
         } catch (Exception e) {
             e.getStackTrace();
@@ -43,12 +50,7 @@ public class main {
 
             }
         }
-        for(Medico medico1 : medicos){
-            System.out.println(medico1);
-        }
-        
         System.out.println(medico);
-
     }
 
 }
