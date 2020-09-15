@@ -8,18 +8,8 @@ package com.mx.tutorial.hibernate;
 import com.mx.tutorial.hibernate.entities.Medico;
 import com.mx.tutorial.hibernate.sessions.HibernateSession;
 import java.util.List;
-import org.hibernate.Criteria;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.LogicalExpression;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.NativeQuery;
-import org.hibernate.query.Query;
-import org.hibernate.transform.Transformers;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.StringType;
+import org.hibernate.Transaction;
 
 /**
  *
@@ -32,23 +22,31 @@ public class main {
         Session session = null;
         Medico medico = null;
         List<Medico> medicos = null;
+        Transaction tx = null;
 
         try {
 
             session = HibernateSession.getSessionFactory().openSession();
-            NativeQuery query = (NativeQuery) session.createNativeQuery("SELECT id, nombre FROM Medico", Medico.class);
-            
-            medicos = query.list();
-                    
+            tx = session.beginTransaction();
+            //Guardar
+            session.save(null);
+            //Actualizar
+            session.update(null);
+            //Eliminar
+            session.delete(null);
+
         } catch (Exception e) {
-            e.getStackTrace();
+            tx.rollback();
         } finally {
             if (session == null) {
                 session.close();
-
             }
         }
-        System.out.println(medicos);
+
+        for (Medico medico1 : medicos) {
+            System.out.println(medico1);
+        }
+
     }
 
 }
