@@ -15,6 +15,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.IntegerType;
@@ -35,10 +36,7 @@ public class main {
         try {
 
             session = HibernateSession.getSessionFactory().openSession();
-            SQLQuery query = (SQLQuery) session.createNativeQuery("SELECT id, nombre FROM medico")
-                    .addScalar("id", new IntegerType())
-                    .addScalar("nombre", new StringType())
-                    .setResultTransformer(Transformers.aliasToBean(Medico.class));
+            NativeQuery query = (NativeQuery) session.createNativeQuery("SELECT id, nombre FROM Medico", Medico.class);
             
             medicos = query.list();
                     
